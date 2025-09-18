@@ -1,1 +1,8 @@
-hello from here
+git init
+git add .
+git commit -m "hello first commit"
+git remote add origin //the https link
+git branch -M main
+git push -u origin main
+
+
