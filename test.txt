@@ -14,3 +14,342 @@ git commit -m "second commit"
 git remote add origin //link
 git branch -M main
 git push -u origin main
+
+------------------------------------------------------------
+
+# fork cloned repo assumed
+git clone git@github.com:yourusername/repo-name.git
+cd repo-name
+
+# main workflow
+git checkout main
+git pull origin main
+
+# add Student.java and push to main
+git add src/main/java/com/example/Student.java
+git commit -m "Add Student class"
+git push origin main
+
+# create feature branch for calculator
+git checkout -b feature/calculator
+# add calc
+git add src/main/java/com/example/Calculator.java
+git commit -m "Add Calculator"
+git push -u origin feature/calculator
+
+# create PR on GitHub (web) -> screenshot
+
+# simulate conflict by editing same file on main & feature then:
+git fetch origin
+git checkout feature/calculator
+git merge origin/main   # conflict occurs
+
+# resolve conflict, then
+git add <file>
+git commit -m "Resolve merge conflict"
+git push origin feature/calculator
+
+# rebase example
+git checkout -b feature/grade
+git add src/main/java/com/example/Grade.java
+git commit -m "Add Grade"
+git fetch origin
+git rebase origin/main
+# resolve conflicts if any
+git push -u origin feature/grade --force-with-lease
+
+# tagging & release
+git checkout main
+git pull origin main
+git tag -a v1.0 -m "Release v1.0"
+git push origin v1.0
+
+# add actions workflow
+git add .github/workflows/build.yml
+git commit -m "Add CI workflow"
+git push origin <branch>
+
+# ignore file
+echo "ignore.txt" >> .gitignore
+git add .gitignore
+git rm --cached ignore.txt || true
+git commit -m "Add ignore.txt to .gitignore"
+git push origin main
+-----------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ class Singleton {
+ private static Singleton ins = null;
+   private Singleton(){}
+ public static Singleton getInstance()
+ {
+ if (ins == null)
+ ins = new Singleton();
+ return ins;
+ }
+ }
+ class GFG {
+ public static void main(String args[])
+ {
+ Singleton x = Singleton.getInstance();
+ Singleton y = Singleton.getInstance();
+ Singleton z = Singleton.getInstance();
+ System.out.println("Hashcode of x is "
+ + x.hashCode());
+ System.out.println("Hashcode of y is "
+ + y.hashCode());
+ System.out.println("Hashcode of z is "
+ + z.hashCode());
+ }
+ }
+ Output:
+ Hashcodeofxis558638686
+ Hashcodeofyis558638686
+ Hashcodeofzis558638686
+
+-------------------------------------------
+Factory
+ The Factory Design Pattern is a creational design pattern that provides an interface for creating objects in
+ a super class but allows subclasses to alter the type of objects that will be created.
+ public interface Shape {
+ void draw();
+ }
+ public class Rectangle implements Shape {
+ @Override
+ public void draw() {
+ System.out.println("Inside Rectangle::draw() method.");
+ }
+ }
+ public class Square implements Shape {
+ @Override
+ public void draw() {
+ System.out.println("Inside Square::draw() method.");
+ }
+ }
+public class ShapeFactory {
+ public Shape getShape(String shapeType){
+   if(shapeType == null){
+    return null;
+   }
+    
+if(shapeType.equalsIgnoreCase("RECTANGLE")){
+    return new Rectangle();
+    
+   } else if(shapeType.equalsIgnoreCase("SQUARE")){
+    return new Square();
+   }
+   
+   return null;
+ }
+ }
+ public class FactoryPatternDemo {
+ public static void main(String[] args) {
+   ShapeFactory shapeFactory = new ShapeFactory();
+   Shape shape1 = shapeFactory.getShape("CIRCLE");shape1.draw();
+   Shape shape2 = shapeFactory.getShape("RECTANGLE");shape2.draw();
+ }
+ }
+ Output
+ InsideCircle::draw()method.
+ InsideRectangle::draw()method.
+----------------------------------------------------------------
+Adapter
+ The adapter is a structural design pattern that allows objects with incompatible interfaces to collaborate.
+ // Target
+ interface Railroad{
+ void vehicleMoving();
+ }
+ // Adaptee (the class we want to adapt)
+ class Car {
+ public void Drive() {// drive the car}
+ }
+ }
+ // Adapter class implementing the Target interface
+ class Adapter implements Target {
+ private Car car;
+ public Adapter(Car car) {this.car = car;}
+ @Override
+ public void vehicleMoving() {car.drive();}
+ }
+ // Client code
+ public class AdapterPatternExample {
+ public static void main(String[] args) {
+ Car car= new Car();
+ Railroad railroad = new Adapter(car);
+ railroad.vehiclemoving();
+ }
+ }
+Bridge
+ Bridge is a structural design pattern that lets you split a large class or a set of closely related classes into
+ two separate hierarchies—abstraction and implementation—which can be developed independently of
+ each other.
+ // Implementor: Color
+ interface Color {
+ String applyColor();
+ }
+ // Concrete Implementor: RedColor
+ class RedColor implements Color {
+ @Override
+ public String applyColor() {return "Red";}
+ }
+ // Concrete Implementor: BlueColor
+ class BlueColor implements Color {
+ @Override
+ public String applyColor() {return "blue";}
+ }
+ // Abstraction: Shape
+ abstract class Shape {
+ protected Color color;
+ public Shape(Color color) {this.color = color;}
+ abstract String draw();
+ }
+ // Concrete Abstraction: Circle
+ class Circle extends Shape {
+ public Circle(Color color) { super(color);}
+ @Override
+ String draw() {
+return "Drawing a Circle with color " + color.applyColor();
+ }
+ }
+ // Concrete Abstraction: Square
+ class Square extends Shape {
+ public Square(Color color) {
+ super(color);
+ }
+ @Override
+ String draw() {
+ return "Drawing a Square with color " + color.applyColor();
+ }
+ }
+ // Usage
+ public class BridgePatternExample {
+ public static void main(String[] args) {
+ Color redColor = new RedColor();
+ Color blueColor = new BlueColor();
+ Circle circle = new Circle(redColor);
+ Square square = new Square(blueColor);
+ System.out.println(circle.draw()); // Output: Drawing a Circle with
+ color Red
+ System.out.println(square.draw()); // Output: Drawing a Square with
+ color Blue
+ }
+ }
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------
+Proxy
+ Proxy is a structural design pattern that lets you provide a substitute or placeholder for another object. A
+ proxy controls access to the original object.
+ public interface Image {
+ void display();
+ }
+ public class RealImage implements Image {
+ private String fileName;
+ public RealImage(String fileName){
+ this.fileName = fileName;
+ loadFromDisk(fileName);
+ }
+ @Override
+ public void display() {
+ System.out.println("Displaying " + fileName);
+ }
+ private void loadFromDisk(String fileName){
+ System.out.println("Loading " + fileName);
+ }
+}
+ public class ProxyImage implements Image{
+ private RealImage realImage;
+ private String fileName;
+ public ProxyImage(String fileName){
+ this.fileName = fileName;
+ }
+ @Override
+ public void display() {
+ if(realImage == null){
+ realImage = new RealImage(fileName);
+ }
+ realImage.display();
+ }
+ }
+ public class ProxyPatternDemo {
+ public static void main(String[] args) {
+ Image image = new ProxyImage("test_10mb.jpg");
+ //image will be loaded from disk
+ image.display();
+ System.out.println("");
+ //image will not be loaded from disk
+ image.display();
+ }
+ }
+ Output
+ Loading test_10mb.jpg
+ Displaying test_10mb.jpg
+ Displaying test_10mb.jpg
+===========================================================================
+Flyweight
+ Flyweight is a structural design pattern that lets you fit more objects into the available amount of
+ RAMbysharing common parts of the state between multiple objects instead of keeping all of the
+ data in each object.
+ interface Shape {
+ void draw();
+ }
+ class Circle implements Shape {
+ private String color;
+ public Circle(String color) {
+ this.color = color;
+ }
+ @Override
+ public void draw() {
+ System.out.println("Drawing Circle with color: " + color);
+ }
+ }
+ // Flyweight Factory
+ class ShapeFactory {
+ private static final Map<String, Shape> circleMap = new HashMap<>();
+public static Shape getCircle(String color) {
+ Circle circle = (Circle) circleMap.get(color);
+ if (circle == null) {
+ circle = new Circle(color);
+ circleMap.put(color, circle);
+ System.out.println("Creating new Circle with color: " + color);
+ }
+ else {
+ System.out.println("Returning the already existing circle of
+ color: " + color);
+ }
+ }
+ }
+ // Client
+ return circle;
+ public class FlyweightPatternExample {
+ public static void main(String[] args) {
+ // Using the flyweight factory to get circles with different colors
+ Shape redCircle = ShapeFactory.getCircle("Red");
+ Shape greenCircle = ShapeFactory.getCircle("Green");
+ Shape blueCircle = ShapeFactory.getCircle("Blue");
+ Shape redCircleAgain = ShapeFactory.getCircle("Red"); // Reusing
+ }
+ }
+ Output:
+ Creating new Circle with color: Red
+ Creating new Circle with color: Green
+ Creating new Circle with color: Blue
+ Returning the already existing circle of color: Re
+
